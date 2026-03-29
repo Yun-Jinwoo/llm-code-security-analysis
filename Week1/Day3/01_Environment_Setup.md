@@ -29,14 +29,17 @@ docker ps
 ```bash
 # 이미지 다운로드 및 실행
 docker pull vulnerables/web-dvwa
-docker run -d -p 80:80 vulnerables/web-dvwa
+docker run -d -p 8081:80 vulnerables/web-dvwa
 ```
+
+> ⚠️ 포트 80이 이미 사용 중이면 8081 등 다른 포트로 변경
 
 접속 및 초기화:
 ```
-http://localhost 접속
+http://localhost:8081 접속
 ID: admin / PW: password 로그인
-하단의 "Setup / Reset DB" 버튼 클릭 → DB 초기화
+하단의 "Create / Reset Database" 버튼 클릭 → DB 초기화
+재로그인 (admin / password)
 ```
 
 Security Level 설정 (연습용):
@@ -114,7 +117,15 @@ Proxy 탭 → Intercept is on
 **설치**:
 ```bash
 pip install semgrep
-semgrep --version  # 확인
+```
+
+> ⚠️ 설치 후 `semgrep` 명령어를 못 찾는 경우 PATH 수동 추가:
+> ```bash
+> set PATH=%PATH%;C:\Users\[유저명]\AppData\Roaming\Python\Python310\Scripts
+> ```
+> 터미널 재시작 후 확인:
+```bash
+semgrep --version
 ```
 
 **첫 스캔**:
@@ -142,9 +153,9 @@ semgrep --config "p/nodejs" test_vuln.js
 
 ## 설치 완료 체크리스트
 
-- [ ] `docker --version` 정상 출력
-- [ ] `http://localhost` 에서 DVWA 로그인 성공
-- [ ] DVWA DB Reset 완료
-- [ ] ZAP 설치 및 실행 확인
-- [ ] Burp Suite 설치 및 프록시 연결 확인
-- [ ] `semgrep --version` 정상 출력
+- [x] `docker --version` 정상 출력
+- [x] `http://localhost:8081` 에서 DVWA 로그인 성공
+- [x] DVWA DB Reset 완료, Security Level: Low 설정
+- [x] ZAP 설치 및 실행 확인
+- [x] Burp Suite 설치 및 프록시 연결 확인 (Open Browser 방식)
+- [x] `semgrep --version` 정상 출력
