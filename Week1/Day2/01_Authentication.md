@@ -113,13 +113,53 @@ OWASP Top 10 2021 기준 **A07 — Identification and Authentication Failures**.
 ### 목표
 응답 메시지 차이로 유효한 아이디를 찾고, 브루트포스로 비밀번호까지 알아내기
 
-### 풀이 흐름
-1. Burp Suite에서 로그인 요청 캡처
-2. Intruder → Sniper 모드 → username 필드에 wordlist 주입
-3. 응답 본문에 "Invalid username" vs "Incorrect password" 메시지 차이 확인
-4. 유효한 username 찾으면 → 이번엔 password 필드에 wordlist 주입
-5. 302 Redirect 응답 = 로그인 성공
+### 사용 도구
+- **Burp Suite Proxy**: 로그인 요청 가로채기
+- **Burp Suite Intruder**: 자동으로 wordlist 대입
+
+### 풀이 순서
+
+**1단계 — 로그인 요청 캡처**
+1. Burp Suite 실행 → Proxy 탭 → **Open Browser** 클릭
+2. Burp 브라우저에서 랩 URL 접속
+3. **Intercept is on** 상태로 전환
+4. 로그인 폼에 아무 값 입력 (`username: test` / `password: test`) → 로그인 클릭
+5. Burp에 요청이 멈춰서 잡힘
+
+**2단계 — Intruder로 username 브루트포스**
+1. 잡힌 요청에서 우클릭 → **Send to Intruder**
+2. Intercept 탭에서 **Forward** 눌러 원래 요청 보내기
+3. Intruder 탭 → **Positions 탭**
+4. **Clear §** 클릭 → `username=` 뒤 값(`test`)만 선택 → **Add §**
+   ```
+   username=§test§&password=test
+   ```
+5. **Payloads 탭** → PortSwigger Candidate usernames wordlist 붙여넣기
+6. **Start attack** 클릭
+7. 결과 창에서 **Length 컬럼** 정렬 → 길이가 다른 항목 = 유효한 username
+
+> 이유: 없는 아이디 → "Invalid username", 있는 아이디 → "Incorrect password"
+> 메시지가 다르면 글자 수가 달라져서 Length가 달라짐
+
+**결과**: username = `mysql`
+
+**3단계 — password 브루트포스**
+1. Intruder Positions 탭으로 돌아가서 **Clear §**
+2. `password=` 뒤 값 선택 → **Add §**, username은 `mysql`로 고정
+   ```
+   username=mysql&password=§test§
+   ```
+3. Payloads 탭 → 기존 목록 지우고 Candidate passwords wordlist 붙여넣기
+4. **Start attack** 클릭
+5. **Status 컬럼**에서 `302` 응답 찾기 = 로그인 성공
+
+**결과**: password = `hockey`
+
+**4단계 — 로그인**
+- Intercept off 전환 후 `mysql` / `hockey` 로 로그인 → 랩 클리어
 
 ### 핵심 포인트
-- 에러 메시지가 다르면 → 아이디 존재 여부 파악 가능
-- Burp Intruder의 **Grep - Match** 기능으로 특정 문자열 포함 여부로 필터링 가능
+- 에러 메시지가 다르면 아이디 존재 여부가 노출됨 → Username Enumeration 취약점
+- Length(응답 크기) 차이로 유효한 값을 식별
+- Status 302 = 리다이렉트 = 로그인 성공 신호
+- Intruder = 특정 값을 wordlist로 자동 교체해서 대량 요청하는 기능
