@@ -78,33 +78,20 @@ Alert 우선순위:
 
 **다운로드**: `portswigger.net/burp/communitydownload`
 
-### 프록시 설정
+### 브라우저 연결 방법 — Open Browser 사용 (권장)
 
-**Burp Suite 설정**:
-```
-Proxy 탭 → Options → Proxy Listeners
-127.0.0.1:8080 이 활성화되어 있는지 확인
-```
+Burp Suite 내장 브라우저를 사용하면 프록시 설정, CA 인증서 설치가 전부 자동으로 되어 있어서 별도 설정 불필요.
 
-**Firefox 설정**:
 ```
-설정 → 네트워크 설정 → 수동 프록시 설정
-HTTP 프록시: 127.0.0.1 / 포트: 8080
-```
-
-**CA 인증서 설치** (HTTPS 트래픽 가로채기용):
-```
-Firefox에서 http://burpsuite 접속
-CA Certificate 다운로드
-Firefox 설정 → 인증서 → 인증서 가져오기
-"이 CA가 웹사이트를 식별하는 것을 신뢰합니다" 체크
+Proxy 탭 → Intercept 탭 → "Open Browser" 클릭
+→ 자동으로 Burp에 연결된 브라우저 실행
 ```
 
 ### 기본 사용법
 
 ```
 Proxy 탭 → Intercept is on
-→ Firefox에서 http://localhost 로그인 시도
+→ Open Browser에서 대상 URL 접속 및 요청 발생
 → Burp에 요청이 멈춤
 → 요청 내용(Headers, Body) 확인
 → Forward 버튼으로 전송
