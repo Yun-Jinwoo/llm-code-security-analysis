@@ -108,7 +108,7 @@ pip install semgrep
 
 > ⚠️ 설치 후 `semgrep` 명령어를 못 찾는 경우 PATH 수동 추가:
 > ```bash
-> set PATH=%PATH%;C:\Users\[유저명]\AppData\Roaming\Python\Python310\Scripts
+> set PATH=%PATH%;C:\Users\admin\AppData\Roaming\Python\Python310\Scripts
 > ```
 > 터미널 재시작 후 확인:
 ```bash
