@@ -1,0 +1,18 @@
+rules:
+  - id: sql-injection-string-concat
+    pattern-either:
+      - pattern: |
+          $QUERY = $A + $INPUT
+      - pattern: |
+          db.query($A + $INPUT)
+    message: SQL Injection risk - user input directly concatenated into query. Use prepared statements.
+    languages: [javascript]
+    severity: ERROR
+
+  - id: hardcoded-secret
+    pattern-either:
+      - pattern: const SECRET_KEY = "..."
+      - pattern: const DB_PASSWORD = "..."
+    message: Hardcoded secret found. Use environment variables instead.
+    languages: [javascript]
+    severity: WARNING
