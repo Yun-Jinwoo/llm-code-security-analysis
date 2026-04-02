@@ -1,0 +1,9 @@
+rules:
+  - id: jwt-algorithm-none
+    pattern: "jwt.verify($TOKEN, $SECRET, { algorithms: [..., 'none', ...] })"
+    message: "JWT alg:none is allowed. Remove 'none' from algorithms list."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-347
+      owasp: A02:2021

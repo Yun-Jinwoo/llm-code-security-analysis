@@ -1,0 +1,9 @@
+rules:
+  - id: weak-hash-md5
+    pattern: crypto.createHash('md5')
+    message: "MD5 is a weak hash algorithm. Use bcrypt or argon2 instead."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-916
+      owasp: A02:2021

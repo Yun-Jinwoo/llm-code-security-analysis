@@ -1,0 +1,12 @@
+rules:
+  - id: nodejs-sql-injection-concat
+    patterns:
+      - pattern: |
+          const $QUERY = $A + $B;
+          $DB.query($QUERY, ...);
+    message: "SQL Injection risk: query built with string concatenation. Use Prepared Statements instead."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-89
+      owasp: A03:2021
