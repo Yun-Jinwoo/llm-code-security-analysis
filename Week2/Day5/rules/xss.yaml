@@ -1,0 +1,10 @@
+rules:
+  - id: xss-res-send-concat
+    patterns:
+      - pattern: res.send($A + $INPUT)
+    message: "XSS risk: user input directly inserted into response. Use template escaping."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-79
+      owasp: A03:2021

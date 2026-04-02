@@ -1,0 +1,13 @@
+rules:
+  - id: file-upload-no-validation
+    patterns:
+      - pattern: |
+          const $FILENAME = req.body.$FIELD;
+          ...
+          fs.writeFileSync($PATH + $FILENAME, ...)
+    message: "File upload without extension validation. Validate and whitelist allowed extensions."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-434
+      owasp: A08:2021

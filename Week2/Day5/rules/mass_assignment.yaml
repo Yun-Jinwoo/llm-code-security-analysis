@@ -1,0 +1,12 @@
+rules:
+  - id: mass-assignment-req-body
+    patterns:
+      - pattern: |
+          const $VAR = req.body;
+          $DB.query($QUERY, $VAR, ...)
+    message: "Mass assignment risk: req.body passed directly to DB query. Whitelist allowed fields explicitly."
+    languages: [javascript]
+    severity: ERROR
+    metadata:
+      cwe: CWE-915
+      owasp: A03:2021

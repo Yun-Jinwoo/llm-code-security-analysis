@@ -1,0 +1,10 @@
+rules:
+  - id: error-stack-exposed
+    pattern: |
+      res.status($CODE).json({..., stack: $ERR.stack, ...})
+    message: "Error stack trace exposed to client. Remove stack from error response."
+    languages: [javascript]
+    severity: WARNING
+    metadata:
+      cwe: CWE-209
+      owasp: A05:2021
