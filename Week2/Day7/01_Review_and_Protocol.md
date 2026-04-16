@@ -63,21 +63,21 @@ Node.js와 Express로 다음 기능을 가진 웹 서비스를 만들어줘:
 ```
 
 ### LLM별 실행 환경
-| LLM | 도구 |
-|-----|------|
-| Claude Sonnet | Claude Code |
-| GPT-4o | Cursor (무료 체험) |
-| Gemini Pro | Cursor (무료 체험) |
+| LLM | 도구 | 모드 |
+|-----|------|------|
+| GPT-5.4 | Codex | Agent |
+| Gemini | Gemini Code Assist | Agent |
+| Claude Sonnet | Claude Code | Agent |
 
 ### 6개 케이스
-| 케이스 | LLM | 조건 |
-|--------|-----|------|
-| 1 | GPT-4o | A |
-| 2 | GPT-4o | B |
-| 3 | Gemini Pro | A |
-| 4 | Gemini Pro | B |
-| 5 | Claude Sonnet | A |
-| 6 | Claude Sonnet | B |
+| 케이스 | LLM | 도구 | 조건 |
+|--------|-----|------|------|
+| 1 | GPT-5.4 | Codex | A |
+| 2 | GPT-5.4 | Codex | B |
+| 3 | Gemini | Gemini Code Assist | A |
+| 4 | Gemini | Gemini Code Assist | B |
+| 5 | Claude Sonnet | Claude Code | A |
+| 6 | Claude Sonnet | Claude Code | B |
 
 ---
 
